@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Simulador da Reta Final - Palmeiras vs Flamengo</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: #0f172a;
+      color: #f8fafc;
+      margin: 0;
+      padding: 12px;
+    }
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      background: #1e293b;
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+    }
+    h1 {
+      text-align: center;
+      font-size: 22px;
+      margin-top: 0;
+      margin-bottom: 6px;
+      color: #f1f5f9;
+    }
+    p.subtitle {
+      text-align: center;
+      font-size: 13px;
+      color: #94a3b8;
+      margin-top: 0;
+      margin-bottom: 20px;
+    }
+    .nickname-box {
+      background: #0f172a;
+      padding: 14px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+      border: 1px solid #334155;
+    }
+    .nickname-box label {
+      display: block;
+      font-weight: 600;
+      font-size: 14px;
+      margin-bottom: 6px;
+      color: #e2e8f0;
+    }
+    .nickname-box input {
+      width: 100%;
+      padding: 10px 12px;
+      border-radius: 8px;
+      border: 1px solid #475569;
+      background: #1e293b;
+      color: #fff;
+      font-size: 15px;
+    }
+    .nickname-box input:focus {
+      outline: none;
+      border-color: #38bdf8;
+    }
+    .team-header {
+      padding: 10px 14px;
+      border-radius: 8px;
+      font-weight: bold;
+      font-size: 16px;
+      margin-top: 25px;
+      margin-bottom: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .palmeiras-header {
+      background: linear-gradient(135deg, #006437, #004d2a);
+      color: #fff;
+      border-left: 6px solid #10b981;
+    }
+    .flamengo-header {
+      background: linear-gradient(135deg, #c8102e, #990b22);
+      color: #fff;
+      border-left: 6px solid #f43f5e;
+    }
+    .match-card {
+      background: #0f172a;
+      border-radius: 8px;
+      padding: 10px 12px;
+      margin-bottom: 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border: 1px solid #334155;
+    }
+    .match-info {
+      font-size: 13px;
+      font-weight: 500;
+      color: #e2e8f0;
+      flex-grow: 1;
+      padding-right: 10px;
+    }
+    .btn-group {
+      display: flex;
+      gap: 4px;
+    }
+    .btn-opt {
+      width: 36px;
+      height: 34px;
+      border: 1px solid #475569;
+      background: #1e293b;
+      color: #cbd5e1;
+      border-radius: 6px;
+      font-weight: bold;
+      font-size: 12px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-opt:hover {
+      background: #334155;
+    }
+    .btn-opt.active-v { background: #10b981; color: #fff; border-color: #10b981; }
+    .btn-opt.active-e { background: #f59e0b; color: #fff; border-color: #f59e0b; }
+    .btn-opt.active-d { background: #ef4444; color: #fff; border-color: #ef4444; }
+    
+    .btn-submit {
+      width: 100%;
+      padding: 14px;
+      background: linear-gradient(135deg, #2563eb, #1d4ed8);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-size: 16px;
+      font-weight: bold;
+      margin-top: 25px;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.4);
+      transition: opacity 0.2s;
+    }
+    .btn-submit:hover { opacity: 0.9; }
+
+    #result-box {
+      margin-top: 25px;
+      display: none;
+      background: #0f172a;
+      border-radius: 12px;
+      padding: 16px;
+      border: 2px solid #38bdf8;
+      text-align: center;
+    }
+    #result-box h3 { margin-top: 0; color: #38bdf8; font-size: 18px; }
+    .score-summary {
+      display: flex;
+      justify-content: space-around;
+      margin: 15px 0;
+      font-size: 14px;
+    }
+    .score-item { background: #1e293b; padding: 10px; border-radius: 8px; flex: 1; margin: 0 4px; }
+    .champ-badge {
+      font-size: 18px;
+      font-weight: bold;
+      color: #fbbf24;
+      margin-top: 10px;
+    }
+
+    .leaderboard {
+      margin-top: 30px;
+      border-top: 1px solid #334155;
+      padding-top: 20px;
+    }
+    .leaderboard h3 {
+      font-size: 16px;
+      color: #f1f5f9;
+      margin-bottom: 12px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 11px;
+    }
+    th, td {
+      padding: 8px 4px;
+      text-align: left;
+      border-bottom: 1px solid #334155;
+    }
+    th { background: #0f172a; color: #94a3b8; font-weight: 600; }
+    td { color: #cbd5e1; }
+    .champ-pal { color: #34d399; font-weight: bold; }
+    .champ-fla { color: #f87171; font-weight: bold; }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <h1>🏆 Simulador do Brasileirão 2026</h1>
+  <p class="subtitle">Palpite os 13 jogos restantes de Palmeiras e Flamengo</p>
+
+  <div class="nickname-box">
+    <label for="nickname">Seu Nickname / Nome para o Grupo:</label>
+    <input type="text" id="nickname" placeholder="Ex: Carlão, João, Pedro..." required>
+  </div>
+
+  <!-- PALMEIRAS -->
+  <div class="team-header palmeiras-header">
+    <span>🟢 Palmeiras</span>
+    <span style="font-size: 12px; opacity: 0.9;">52 pts | 15 Vitórias</span>
+  </div>
+  <div id="palmeiras-matches"></div>
+
+  <!-- FLAMENGO -->
+  <div class="team-header flamengo-header">
+    <span>🔴 Flamengo</span>
+    <span style="font-size: 12px; opacity: 0.9;">51 pts | 15 Vitórias</span>
+  </div>
+  <div id="flamengo-matches"></div>
+
+  <button class="btn-submit" onclick="calcularESalvar()">✅ Finalizar e Salvar Palpite</button>
+
+  <div id="result-box"></div>
+
+  <div class="leaderboard">
+    <h3>📊 Palpites Registrados no Grupo</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Nick</th>
+          <th>PAL (Pts / V)</th>
+          <th>FLA (Pts / V)</th>
+          <th>Campeão na Opinião</th>
+        </tr>
+      </thead>
+      <tbody id="tableBody">
+        <tr><td colspan="4" style="text-align:center; color:#64748b;">Carregando palpites...</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<script>
+  // ⚠️ SUBSTITUA COM A SUA URL GERADA NO SHEETDB.IO
+  const SHEETDB_URL = "https://sheetdb.io/api/v1/x3ym6rfhd1zhq";
+
+  const PTS_INICIAIS_PAL = 52; 
+  const PTS_INICIAIS_FLA = 51;
+
+  const VITORIAS_INICIAIS_PAL = 15;
+  const VITORIAS_INICIAIS_FLA = 15;
+
+  const jogosPalmeiras = [
+    "Botafogo x Palmeiras",
+    "Palmeiras x São Paulo",
+    "Gremio x Palmeiras",
+    "Palmeiras x Bahia",
+    "Palmeiras x Corinthians",
+    "Athletico PR x Palmeiras",
+    "Palmeiras x RB Bragantino",
+    "Santos x Palmeiras",
+    "Palmeiras x Remo",
+    "Cruzeiro x Palmeiras",
+    "Palmeiras x Flamengo",
+    "Chapecoense x Palmeiras",
+    "Palmeiras x Coritiba"
+  ];
+
+  const jogosFlamengo = [
+    "Remo x Flamengo",
+    "Flamengo x Corinthians",
+    "Flamengo x RB Bragantino",
+    "Santos x Flamengo",
+    "Flamengo x Fluminense",
+    "Bahia x Flamengo",
+    "Flamengo x Atletico MG",
+    "Vasco x Flamengo",
+    "Flamengo x Gremio",
+    "Flamengo x Athletico PR",
+    "Palmeiras x Flamengo",
+    "Coritiba x Flamengo",
+    "Flamengo x Chapecoense"
+  ];
+
+  const palpitesPal = {};
+  const palpitesFla = {};
+
+  function renderMatches() {
+    const containerPal = document.getElementById('palmeiras-matches');
+    jogosPalmeiras.forEach((m, idx) => {
+      containerPal.innerHTML += createMatchHTML('pal', idx, m);
+    });
+
+    const containerFla = document.getElementById('flamengo-matches');
+    jogosFlamengo.forEach((m, idx) => {
+      containerFla.innerHTML += createMatchHTML('fla', idx, m);
+    });
+  }
+
+  function createMatchHTML(team, idx, matchName) {
+    return `
+      <div class="match-card">
+        <div class="match-info">R${idx + 26}: ${matchName}</div>
+        <div class="btn-group">
+          <button class="btn-opt" onclick="setPalpite('${team}', ${idx}, 3, 'v', this)">V</button>
+          <button class="btn-opt" onclick="setPalpite('${team}', ${idx}, 1, 'e', this)">E</button>
+          <button class="btn-opt" onclick="setPalpite('${team}', ${idx}, 0, 'd', this)">D</button>
+        </div>
+      </div>
+    `;
+  }
+
+  function setPalpite(team, idx, pts, type, btn) {
+    const parent = btn.parentElement;
+    Array.from(parent.children).forEach(b => {
+      b.classList.remove('active-v', 'active-e', 'active-d');
+    });
+    btn.classList.add(`active-${type}`);
+
+    if (team === 'pal') {
+      palpitesPal[idx] = pts;
+      if (idx === 10) {
+        let ptsFlaEquiv = 0;
+        let typeFla = 'd';
+        if (pts === 3) { ptsFlaEquiv = 0; typeFla = 'd'; }
+        else if (pts === 1) { ptsFlaEquiv = 1; typeFla = 'e'; }
+        else if (pts === 0) { ptsFlaEquiv = 3; typeFla = 'v'; }
+        
+        palpitesFla[10] = ptsFlaEquiv;
+        const parentFla = document.querySelectorAll('#flamengo-matches .match-card')[10].querySelector('.btn-group');
+        Array.from(parentFla.children).forEach(b => b.classList.remove('active-v', 'active-e', 'active-d'));
+        const btnFlaTarget = parentFla.querySelector(`.btn-opt:nth-child(${typeFla === 'v' ? 1 : typeFla === 'e' ? 2 : 3})`);
+        if (btnFlaTarget) btnFlaTarget.classList.add(`active-${typeFla}`);
+      }
+    } else if (team === 'fla') {
+      palpitesFla[idx] = pts;
+      if (idx === 10) {
+        let ptsPalEquiv = 0;
+        let typePal = 'd';
+        if (pts === 3) { ptsPalEquiv = 0; typePal = 'd'; }
+        else if (pts === 1) { ptsPalEquiv = 1; typePal = 'e'; }
+        else if (pts === 0) { ptsPalEquiv = 3; typePal = 'v'; }
+
+        palpitesPal[10] = ptsPalEquiv;
+        const parentPal = document.querySelectorAll('#palmeiras-matches .match-card')[10].querySelector('.btn-group');
+        Array.from(parentPal.children).forEach(b => b.classList.remove('active-v', 'active-e', 'active-d'));
+        const btnPalTarget = parentPal.querySelector(`.btn-opt:nth-child(${typePal === 'v' ? 1 : typePal === 'e' ? 2 : 3})`);
+        if (btnPalTarget) btnPalTarget.classList.add(`active-${typePal}`);
+      }
+    }
+  }
+
+  async function calcularESalvar() {
+    const nick = document.getElementById('nickname').value.trim();
+    if (!nick) { alert("Por favor, digite seu nickname antes de enviar!"); return; }
+
+    if (Object.keys(palpitesPal).length < 13 || Object.keys(palpitesFla).length < 13) {
+      alert("Por favor, marque o palpite de todos os 13 jogos para ambos os times!");
+      return;
+    }
+
+    const vitSimuladasPal = Object.values(palpitesPal).filter(p => p === 3).length;
+    const vitSimuladasFla = Object.values(palpitesFla).filter(p => p === 3).length;
+
+    const vitTotalPal = VITORIAS_INICIAIS_PAL + vitSimuladasPal;
+    const vitTotalFla = VITORIAS_INICIAIS_FLA + vitSimuladasFla;
+
+    const ptsPal = Object.values(palpitesPal).reduce((a, b) => a + b, PTS_INICIAIS_PAL);
+    const ptsFla = Object.values(palpitesFla).reduce((a, b) => a + b, PTS_INICIAIS_FLA);
+
+    let campeao = "";
+    let criterioDesc = "";
+
+    if (ptsPal > ptsFla) {
+      campeao = "Palmeiras";
+    } else if (ptsFla > ptsPal) {
+      campeao = "Flamengo";
+    } else {
+      // Empate em pontos -> Criterio de Vitorias
+      if (vitTotalPal > vitTotalFla) {
+        campeao = "Palmeiras";
+        criterioDesc = " (Desempate por Vitorias)";
+      } else if (vitTotalFla > vitTotalPal) {
+        campeao = "Flamengo";
+        criterioDesc = " (Desempate por Vitorias)";
+      } else {
+        campeao = "Empate Total (Pontos e Vitórias)";
+      }
+    }
+
+    const resBox = document.getElementById('result-box');
+    resBox.style.display = 'block';
+    resBox.innerHTML = `
+      <h3>Resultado da sua Simulação</h3>
+      <div class="score-summary">
+        <div class="score-item">🟢 PAL: <strong>${ptsPal} pts</strong><br><small>(${vitTotalPal} vitórias)</small></div>
+        <div class="score-item">🔴 FLA: <strong>${ptsFla} pts</strong><br><small>(${vitTotalFla} vitórias)</small></div>
+      </div>
+      <div class="champ-badge">👑 Campeão: ${campeao}${criterioDesc}</div>
+    `;
+
+    resBox.scrollIntoView({ behavior: 'smooth' });
+
+    if (SHEETDB_URL.includes("SUA_API_KEY_AQUI")) {
+      console.warn("SheetDB URL ainda não foi configurada.");
+      return;
+    }
+
+    const payload = {
+      data: [{
+        data_hora: new Date().toLocaleString("pt-BR"),
+        nickname: nick,
+        pontos_palmeiras: ptsPal,
+        vitorias_palmeiras: vitTotalPal,
+        pontos_flamengo: ptsFla,
+        vitorias_flamengo: vitTotalFla,
+        campeao_palpite: campeao
+      }]
+    };
+
+    try {
+      await fetch(SHEETDB_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      carregarResultados();
+    } catch (e) {
+      console.error("Erro ao salvar palpite:", e);
+    }
+  }
+
+  async function carregarResultados() {
+    if (SHEETDB_URL.includes("SUA_API_KEY_AQUI")) {
+      document.getElementById('tableBody').innerHTML = '<tr><td colspan="4" style="text-align:center;">Insira a URL do SheetDB para carregar os dados.</td></tr>';
+      return;
+    }
+
+    try {
+      const res = await fetch(SHEETDB_URL);
+      const data = await res.json();
+      const tbody = document.getElementById('tableBody');
+      tbody.innerHTML = '';
+
+      if (data.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;">Nenhum palpite registrado ainda.</td></tr>';
+        return;
+      }
+
+      data.reverse().forEach(row => {
+        let classChamp = '';
+        if (row.campeao_palpite === 'Palmeiras') classChamp = 'champ-pal';
+        if (row.campeao_palpite === 'Flamengo') classChamp = 'champ-fla';
+
+        const displayPal = row.vitorias_palmeiras ? `${row.pontos_palmeiras} <small>(${row.vitorias_palmeiras}V)</small>` : row.pontos_palmeiras;
+        const displayFla = row.vitorias_flamengo ? `${row.pontos_flamengo} <small>(${row.vitorias_flamengo}V)</small>` : row.pontos_flamengo;
+
+        tbody.innerHTML += `
+          <tr>
+            <td><strong>${row.nickname}</strong></td>
+            <td>${displayPal}</td>
+            <td>${displayFla}</td>
+            <td class="${classChamp}">${row.campeao_palpite}</td>
+          </tr>
+        `;
+      });
+    } catch (e) {
+      document.getElementById('tableBody').innerHTML = '<tr><td colspan="4" style="text-align:center; color:#f87171;">Erro ao carregar os dados.</td></tr>';
+    }
+  }
+
+  renderMatches();
+  carregarResultados();
+</script>
+
+</body>
+</html>
