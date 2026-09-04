@@ -1,0 +1,45 @@
+name: Atualizar Rodada do Simulador
+
+on:
+  workflow_dispatch:
+    inputs:
+      time:
+        description: 'Selecione o Time'
+        required: true
+        default: 'PAL'
+        type: choice
+        options:
+          - PAL
+          - FLA
+      resultado:
+        description: 'Resultado do Jogo (V = Vitória, E = Empate, D = Derrota)'
+        required: true
+        default: 'V'
+        type: choice
+        options:
+          - V
+          - E
+          - D
+
+jobs:
+  update-data:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout do código
+        uses: actions/checkout@v3
+
+      - name: Configurar Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+
+      - name: Executar script de atualização
+        run: python atualizar.py ${{ github.event.inputs.time }} ${{ github.event.inputs.resultado }}
+
+      - name: Fazer Commit e Push das alterações
+        run: |
+          git config --global user.name "GitHub Action"
+          git config --global user.email "action@github.com"
+          git add index.html
+          git commit -m "Atualização automática da rodada: ${{ github.event.inputs.time }} - ${{ github.event.inputs.resultado }}"
+          git push
