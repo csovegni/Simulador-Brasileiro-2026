@@ -1,49 +1,38 @@
 import re
 
 def atualizar_simulador(time, resultado, pts_time, vit_time):
-    """
-    time: 'PAL' ou 'FLA'
-    resultado: 'V', 'E' ou 'D'
-    pts_time: pontos ganhos na rodada (3, 1 ou 0)
-    vit_time: vitórias ganhas na rodada (1 ou 0)
-    """
     with open("index.html", "r", encoding="utf-8") as f:
         content = f.read()
 
     if time == "PAL":
-        # Atualiza Pontos
+        # 1. Pontos
         old_pts = int(re.search(r'const PTS_INICIAIS_PAL = (\d+);', content).group(1))
-        new_pts = old_pts + pts_time
-        content = re.sub(r'const PTS_INICIAIS_PAL = \d+;', f'const PTS_INICIAIS_PAL = {new_pts};', content)
+        content = re.sub(r'const PTS_INICIAIS_PAL = \d+;', f'const PTS_INICIAIS_PAL = {old_pts + pts_time};', content)
         
-        # Atualiza Vitórias
+        # 2. Vitórias
         old_vit = int(re.search(r'const VITORIAS_INICIAIS_PAL = (\d+);', content).group(1))
-        new_vit = old_vit + vit_time
-        content = re.sub(r'const VITORIAS_INICIAIS_PAL = \d+;', f'const VITORIAS_INICIAIS_PAL = {new_vit};', content)
+        content = re.sub(r'const VITORIAS_INICIAIS_PAL = \d+;', f'const VITORIAS_INICIAIS_PAL = {old_vit + vit_time};', content)
         
-        # Remove o primeiro jogo da lista
-        content = re.sub(r'const jogosPalmeiras = \[\s*\n\s*"[^"]*",?', 'const jogosPalmeiras = [', content)
+        # 3. Remove o primeiro jogo da lista
+        content = re.sub(r'(const jogosPalmeiras = \[\s*\n\s*)"[^"]*",?\s*', r'\1', content, count=1)
 
     elif time == "FLA":
-        # Atualiza Pontos
+        # 1. Pontos
         old_pts = int(re.search(r'const PTS_INICIAIS_FLA = (\d+);', content).group(1))
-        new_pts = old_pts + pts_time
-        content = re.sub(r'const PTS_INICIAIS_FLA = \d+;', f'const PTS_INICIAIS_FLA = {new_pts};', content)
+        content = re.sub(r'const PTS_INICIAIS_FLA = \d+;', f'const PTS_INICIAIS_FLA = {old_pts + pts_time};', content)
         
-        # Atualiza Vitórias
+        # 2. Vitórias
         old_vit = int(re.search(r'const VITORIAS_INICIAIS_FLA = (\d+);', content).group(1))
-        new_vit = old_vit + vit_time
-        content = re.sub(r'const VITORIAS_INICIAIS_FLA = \d+;', f'const VITORIAS_INICIAIS_FLA = {new_vit};', content)
+        content = re.sub(r'const VITORIAS_INICIAIS_FLA = \d+;', f'const VITORIAS_INICIAIS_FLA = {old_vit + vit_time};', content)
         
-        # Remove o primeiro jogo da lista
-        content = re.sub(r'const jogosFlamengo = \[\s*\n\s*"[^"]*",?', 'const jogosFlamengo = [', content)
+        # 3. Remove o primeiro jogo da lista
+        content = re.sub(r'(const jogosFlamengo = \[\s*\n\s*)"[^"]*",?\s*', r'\1', content, count=1)
 
     with open("index.html", "w", encoding="utf-8") as f:
         f.write(content)
 
 if __name__ == "__main__":
     import sys
-    # Exemplo de execução via terminal/actions: python atualizar.py PAL V
     t = sys.argv[1] # PAL ou FLA
     res = sys.argv[2] # V, E ou D
     
