@@ -193,26 +193,26 @@
 
 <div class="container">
   <h1>🏆 Simulador do Brasileirão 2026</h1>
-  <p class="subtitle">Palpite os 13 jogos restantes de Palmeiras e Flamengo</p>
+  <p class="subtitle">Palpite os 6 jogos restantes da Rodada 33 até a 38</p>
 
   <div class="nickname-box">
     <label for="nickname">Seu Nickname / Nome para o Grupo:</label>
     <input type="text" id="nickname" placeholder="Ex: Carlão, João, Pedro..." required>
   </div>
 
-  <!-- PALMEIRAS -->
-  <div class="team-header palmeiras-header">
-    <span>🟢 Palmeiras</span>
-    <span style="font-size: 12px; opacity: 0.9;">52 pts | 15 Vitórias</span>
-  </div>
-  <div id="palmeiras-matches"></div>
-
   <!-- FLAMENGO -->
   <div class="team-header flamengo-header">
     <span>🔴 Flamengo</span>
-    <span style="font-size: 12px; opacity: 0.9;">51 pts | 15 Vitórias</span>
+    <span style="font-size: 12px; opacity: 0.9;">70 pts | 21 Vitórias</span>
   </div>
   <div id="flamengo-matches"></div>
+
+  <!-- PALMEIRAS -->
+  <div class="team-header palmeiras-header">
+    <span>🟢 Palmeiras</span>
+    <span style="font-size: 12px; opacity: 0.9;">69 pts | 20 Vitórias</span>
+  </div>
+  <div id="palmeiras-matches"></div>
 
   <button class="btn-submit" onclick="calcularESalvar()">✅ Finalizar e Salvar Palpite</button>
 
@@ -224,8 +224,8 @@
       <thead>
         <tr>
           <th>Nick</th>
-          <th>PAL (Pts / V)</th>
           <th>FLA (Pts / V)</th>
+          <th>PAL (Pts / V)</th>
           <th>Campeão na Opinião</th>
         </tr>
       </thead>
@@ -238,38 +238,15 @@
 
 <script>
   // ⚠️ SUBSTITUA COM A SUA URL GERADA NO SHEETDB.IO
-  const SHEETDB_URL = "https://sheetdb.io/api/v1/x3ym6rfhd1zhq";
+  const SHEETDB_URL = "https://sheetdb.io/api/v1/SUA_API_KEY_AQUI";
 
-  const PTS_INICIAIS_PAL = 52; 
-  const PTS_INICIAIS_FLA = 51;
+  const PTS_INICIAIS_FLA = 70; 
+  const PTS_INICIAIS_PAL = 69;
 
-  const VITORIAS_INICIAIS_PAL = 15;
-  const VITORIAS_INICIAIS_FLA = 15;
-
-  const jogosPalmeiras = [
-    "Botafogo x Palmeiras",
-    "Palmeiras x São Paulo",
-    "Gremio x Palmeiras",
-    "Palmeiras x Bahia",
-    "Palmeiras x Corinthians",
-    "Athletico PR x Palmeiras",
-    "Palmeiras x RB Bragantino",
-    "Santos x Palmeiras",
-    "Palmeiras x Remo",
-    "Cruzeiro x Palmeiras",
-    "Palmeiras x Flamengo",
-    "Chapecoense x Palmeiras",
-    "Palmeiras x Coritiba"
-  ];
+  const VITORIAS_INICIAIS_FLA = 21;
+  const VITORIAS_INICIAIS_PAL = 20;
 
   const jogosFlamengo = [
-    "Remo x Flamengo",
-    "Flamengo x Corinthians",
-    "Flamengo x RB Bragantino",
-    "Santos x Flamengo",
-    "Flamengo x Fluminense",
-    "Bahia x Flamengo",
-    "Flamengo x Atletico MG",
     "Vasco x Flamengo",
     "Flamengo x Gremio",
     "Flamengo x Athletico PR",
@@ -278,25 +255,34 @@
     "Flamengo x Chapecoense"
   ];
 
-  const palpitesPal = {};
+  const jogosPalmeiras = [
+    "Santos x Palmeiras",
+    "Palmeiras x Remo",
+    "Cruzeiro x Palmeiras",
+    "Palmeiras x Flamengo",
+    "Chapecoense x Palmeiras",
+    "Palmeiras x Coritiba"
+  ];
+
   const palpitesFla = {};
+  const palpitesPal = {};
 
   function renderMatches() {
-    const containerPal = document.getElementById('palmeiras-matches');
-    jogosPalmeiras.forEach((m, idx) => {
-      containerPal.innerHTML += createMatchHTML('pal', idx, m);
-    });
-
     const containerFla = document.getElementById('flamengo-matches');
     jogosFlamengo.forEach((m, idx) => {
       containerFla.innerHTML += createMatchHTML('fla', idx, m);
+    });
+
+    const containerPal = document.getElementById('palmeiras-matches');
+    jogosPalmeiras.forEach((m, idx) => {
+      containerPal.innerHTML += createMatchHTML('pal', idx, m);
     });
   }
 
   function createMatchHTML(team, idx, matchName) {
     return `
       <div class="match-card">
-        <div class="match-info">R${idx + 26}: ${matchName}</div>
+        <div class="match-info">R${idx + 33}: ${matchName}</div>
         <div class="btn-group">
           <button class="btn-opt" onclick="setPalpite('${team}', ${idx}, 3, 'v', this)">V</button>
           <button class="btn-opt" onclick="setPalpite('${team}', ${idx}, 1, 'e', this)">E</button>
@@ -315,30 +301,30 @@
 
     if (team === 'pal') {
       palpitesPal[idx] = pts;
-      if (idx === 10) {
+      if (idx === 3) {
         let ptsFlaEquiv = 0;
         let typeFla = 'd';
         if (pts === 3) { ptsFlaEquiv = 0; typeFla = 'd'; }
         else if (pts === 1) { ptsFlaEquiv = 1; typeFla = 'e'; }
         else if (pts === 0) { ptsFlaEquiv = 3; typeFla = 'v'; }
         
-        palpitesFla[10] = ptsFlaEquiv;
-        const parentFla = document.querySelectorAll('#flamengo-matches .match-card')[10].querySelector('.btn-group');
+        palpitesFla[3] = ptsFlaEquiv;
+        const parentFla = document.querySelectorAll('#flamengo-matches .match-card')[3].querySelector('.btn-group');
         Array.from(parentFla.children).forEach(b => b.classList.remove('active-v', 'active-e', 'active-d'));
         const btnFlaTarget = parentFla.querySelector(`.btn-opt:nth-child(${typeFla === 'v' ? 1 : typeFla === 'e' ? 2 : 3})`);
         if (btnFlaTarget) btnFlaTarget.classList.add(`active-${typeFla}`);
       }
     } else if (team === 'fla') {
       palpitesFla[idx] = pts;
-      if (idx === 10) {
+      if (idx === 3) {
         let ptsPalEquiv = 0;
         let typePal = 'd';
         if (pts === 3) { ptsPalEquiv = 0; typePal = 'd'; }
         else if (pts === 1) { ptsPalEquiv = 1; typePal = 'e'; }
         else if (pts === 0) { ptsPalEquiv = 3; typePal = 'v'; }
 
-        palpitesPal[10] = ptsPalEquiv;
-        const parentPal = document.querySelectorAll('#palmeiras-matches .match-card')[10].querySelector('.btn-group');
+        palpitesPal[3] = ptsPalEquiv;
+        const parentPal = document.querySelectorAll('#palmeiras-matches .match-card')[3].querySelector('.btn-group');
         Array.from(parentPal.children).forEach(b => b.classList.remove('active-v', 'active-e', 'active-d'));
         const btnPalTarget = parentPal.querySelector(`.btn-opt:nth-child(${typePal === 'v' ? 1 : typePal === 'e' ? 2 : 3})`);
         if (btnPalTarget) btnPalTarget.classList.add(`active-${typePal}`);
@@ -350,8 +336,8 @@
     const nick = document.getElementById('nickname').value.trim();
     if (!nick) { alert("Por favor, digite seu nickname antes de enviar!"); return; }
 
-    if (Object.keys(palpitesPal).length < 13 || Object.keys(palpitesFla).length < 13) {
-      alert("Por favor, marque o palpite de todos os 13 jogos para ambos os times!");
+    if (Object.keys(palpitesPal).length < 6 || Object.keys(palpitesFla).length < 6) {
+      alert("Por favor, marque o palpite de todos os 6 jogos para ambos os times!");
       return;
     }
 
@@ -367,17 +353,16 @@
     let campeao = "";
     let criterioDesc = "";
 
-    if (ptsPal > ptsFla) {
-      campeao = "Palmeiras";
-    } else if (ptsFla > ptsPal) {
+    if (ptsFla > ptsPal) {
       campeao = "Flamengo";
+    } else if (ptsPal > ptsFla) {
+      campeao = "Palmeiras";
     } else {
-      // Empate em pontos -> Criterio de Vitorias
-      if (vitTotalPal > vitTotalFla) {
-        campeao = "Palmeiras";
-        criterioDesc = " (Desempate por Vitorias)";
-      } else if (vitTotalFla > vitTotalPal) {
+      if (vitTotalFla > vitTotalPal) {
         campeao = "Flamengo";
+        criterioDesc = " (Desempate por Vitorias)";
+      } else if (vitTotalPal > vitTotalFla) {
+        campeao = "Palmeiras";
         criterioDesc = " (Desempate por Vitorias)";
       } else {
         campeao = "Empate Total (Pontos e Vitórias)";
@@ -389,8 +374,8 @@
     resBox.innerHTML = `
       <h3>Resultado da sua Simulação</h3>
       <div class="score-summary">
-        <div class="score-item">🟢 PAL: <strong>${ptsPal} pts</strong><br><small>(${vitTotalPal} vitórias)</small></div>
         <div class="score-item">🔴 FLA: <strong>${ptsFla} pts</strong><br><small>(${vitTotalFla} vitórias)</small></div>
+        <div class="score-item">🟢 PAL: <strong>${ptsPal} pts</strong><br><small>(${vitTotalPal} vitórias)</small></div>
       </div>
       <div class="champ-badge">👑 Campeão: ${campeao}${criterioDesc}</div>
     `;
@@ -406,10 +391,10 @@
       data: [{
         data_hora: new Date().toLocaleString("pt-BR"),
         nickname: nick,
-        pontos_palmeiras: ptsPal,
-        vitorias_palmeiras: vitTotalPal,
         pontos_flamengo: ptsFla,
         vitorias_flamengo: vitTotalFla,
+        pontos_palmeiras: ptsPal,
+        vitorias_palmeiras: vitTotalPal,
         campeao_palpite: campeao
       }]
     };
@@ -448,14 +433,14 @@
         if (row.campeao_palpite === 'Palmeiras') classChamp = 'champ-pal';
         if (row.campeao_palpite === 'Flamengo') classChamp = 'champ-fla';
 
-        const displayPal = row.vitorias_palmeiras ? `${row.pontos_palmeiras} <small>(${row.vitorias_palmeiras}V)</small>` : row.pontos_palmeiras;
         const displayFla = row.vitorias_flamengo ? `${row.pontos_flamengo} <small>(${row.vitorias_flamengo}V)</small>` : row.pontos_flamengo;
+        const displayPal = row.vitorias_palmeiras ? `${row.pontos_palmeiras} <small>(${row.vitorias_palmeiras}V)</small>` : row.pontos_palmeiras;
 
         tbody.innerHTML += `
           <tr>
             <td><strong>${row.nickname}</strong></td>
-            <td>${displayPal}</td>
             <td>${displayFla}</td>
+            <td>${displayPal}</td>
             <td class="${classChamp}">${row.campeao_palpite}</td>
           </tr>
         `;
